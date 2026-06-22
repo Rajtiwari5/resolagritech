@@ -1,0 +1,94 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  
+  --color-sand-50: #fbfbf8;
+  --color-sand-100: #f5f4eb;
+  --color-sand-200: #e9e6d0;
+  --color-sand-300: #d7d1aa;
+  --color-sand-400: #c2b781;
+  --color-sand-500: #ab9b5b;
+  --color-sand-600: #938144;
+  --color-sand-700: #786637;
+  --color-sand-800: #5e4f2f;
+  --color-sand-950: #1a160d;
+
+  --color-clay-50: #fdfaf7;
+  --color-clay-100: #faf1e6;
+  --color-clay-200: #f4deb8;
+  --color-clay-300: #deb081;
+  --color-clay-500: #c5864c;
+  --color-clay-600: #b26c33;
+  --color-clay-800: #7a3a19;
+  --color-clay-900: #5f2b12;
+  --color-clay-950: #1b0a03;
+
+  --color-sage-50: #f4f6f4;
+  --color-sage-100: #e5ece5;
+  --color-sage-200: #cad6ca;
+  --color-sage-300: #a2b7a2;
+  --color-sage-500: #658465;
+  --color-sage-700: #425b42;
+  --color-sage-800: #334333;
+  --color-sage-950: #0f140f;
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+  }
+}
+
+body {
+  background-color: #fbfbf9;
+  color: #1a160d;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f5f4eb;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c3bda3;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #938144;
+}
+
+/* Glassmorphism Panel styles */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.glass-panel-dark {
+  background: rgba(26, 22, 13, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+@keyframes flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient-flow {
+  background-size: 200% 200%;
+  animation: flow 8s ease infinite;
+}
