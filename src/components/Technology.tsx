@@ -148,7 +148,7 @@ export default function Technology() {
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-center relative">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-stretch relative">
                 {/* Component A */}
                 <motion.div 
                   initial={{ opacity: 0, y: 20 }}
@@ -159,8 +159,8 @@ export default function Technology() {
                   className="p-5 rounded-2xl bg-white border border-sand-200 shadow-sm flex flex-col items-center text-center space-y-3 hover:shadow-md transition-all"
                 >
                   <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-100">Component A</span>
-                  <div className="w-12 h-12 rounded-full bg-blue-50 border border-blue-155 flex items-center justify-center text-blue-500">
-                    <Beaker className="w-5 h-5" />
+                  <div className="w-full h-32 rounded-xl overflow-hidden bg-blue-50/50 border border-sand-100 relative">
+                    <img src="/src/assets/componant a-polymer.jpg" alt="Component A" className="w-full h-full object-cover" />
                   </div>
                   <div>
                     <h4 className="font-bold text-slate-800 text-xs uppercase font-mono">Polymer Base (VAG)</h4>
@@ -178,8 +178,8 @@ export default function Technology() {
                   className="p-5 rounded-2xl bg-white border border-sand-200 shadow-sm flex flex-col items-center text-center space-y-3 hover:shadow-md transition-all"
                 >
                   <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-100">Component B</span>
-                  <div className="w-12 h-12 rounded-full bg-amber-50 border border-amber-155 flex items-center justify-center text-amber-500">
-                    <Activity className="w-5 h-5" />
+                  <div className="w-full h-32 rounded-xl overflow-hidden bg-amber-50/50 border border-sand-100 relative">
+                    <img src="/src/assets/componant%20b%20-%20cross%20linker.jpg" alt="Component B" className="w-full h-full object-cover" />
                   </div>
                   <div>
                     <h4 className="font-bold text-slate-800 text-xs uppercase font-mono">Cross Linker</h4>
@@ -197,8 +197,8 @@ export default function Technology() {
                   className="p-5 rounded-2xl bg-white border border-sand-200 shadow-sm flex flex-col items-center text-center space-y-3 hover:shadow-md transition-all"
                 >
                   <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-100">Component C</span>
-                  <div className="w-12 h-12 rounded-full bg-emerald-50 border border-emerald-155 flex items-center justify-center text-emerald-500">
-                    <Wind className="w-5 h-5" />
+                  <div className="w-full h-32 rounded-xl overflow-hidden bg-emerald-50/50 border border-sand-100 relative">
+                    <img src="/src/assets/component%20c%20ploymer.jpg" alt="Component C" className="w-full h-full object-cover" />
                   </div>
                   <div>
                     <h4 className="font-bold text-slate-800 text-xs uppercase font-mono">Silica Anchoring Polymer</h4>
@@ -216,8 +216,8 @@ export default function Technology() {
                   className="p-5 rounded-2xl bg-gradient-to-br from-clay-700 to-clay-900 border border-clay-950 text-white flex flex-col items-center text-center space-y-3 relative"
                 >
                   <span className="text-[9px] font-mono font-bold tracking-widest px-2 py-0.5 rounded bg-amber-500 text-slate-950 uppercase absolute -top-2.5">Combined Solution</span>
-                  <div className="w-12 h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-amber-300">
-                    <CheckCircle2 className="w-5 h-5" />
+                  <div className="w-full h-32 rounded-xl overflow-hidden bg-white/5 border border-white/20 relative">
+                    <img src="/src/assets/resol formula result of component a,b ,c.png" alt="Resol Formulation" className="w-full h-full object-contain p-2" />
                   </div>
                   <div>
                     <h4 className="font-bold text-amber-400 text-xs uppercase font-mono">Resol Formulation</h4>

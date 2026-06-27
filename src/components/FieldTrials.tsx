@@ -5,381 +5,1114 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Sprout, MapPin, Calendar, Compass, ChevronRight, ChevronLeft, CheckCircle2, TrendingUp, HelpCircle } from 'lucide-react';
+import {
+  Sprout,
+  MapPin,
+  Calendar,
+  ChevronRight,
+  ChevronLeft,
+  CheckCircle2,
+  TrendingUp,
+  Video, // Added for the YouTube Section badge
+  Leaf,  // Added for the University logo badge
+} from 'lucide-react';
 import { FIELD_TRIALS } from '../data';
 
+type Trial = (typeof FIELD_TRIALS)[number];
+type TrialPhase = Trial['phase'];
+type Step = Trial['detailedSteps'][number];
+
 export default function FieldTrials() {
-  const [activeTrialIndex, setActiveTrialIndex] = useState(1); // Default to TRL-6 (Real Field Scale)
-  const currentTrial = FIELD_TRIALS[activeTrialIndex];
+  const [activeTrialIndex, setActiveTrialIndex] = useState(1);
+  const [activeStepIdx, setActiveStepIdx] = useState(0);
 
-  // Helper mock representation of photos based on GPS screenshots inside the PDF
-  const renderMockTrialPhoto = (phase: string, stepIndex: number) => {
-    const isTRL6 = phase === 'TRL-6';
-    
-    // Custom vector mock rendering for the soil steps shown in the PDF photos
-    return (
-      <svg viewBox="0 0 160 100" className="w-full h-full object-cover">
-        <defs>
-          <linearGradient id="photoSand" x1="0%" y1="100%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#d97706" />
-            <stop offset="100%" stopColor="#f59e0b" />
-          </linearGradient>
-          <linearGradient id="photoSoil" x1="0%" y1="100%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#78350f" />
-            <stop offset="100%" stopColor="#92400e" />
-          </linearGradient>
-          <linearGradient id="photoSprout" x1="0%" y1="100%" x2="0%" y2="0%">
-            <stop offset="0%" stopColor="#15803d" />
-            <stop offset="100%" stopColor="#4ade80" />
-          </linearGradient>
-        </defs>
+  const currentTrial: Trial = FIELD_TRIALS[activeTrialIndex];
 
-        {/* Outer frame */}
-        <rect width="160" height="100" fill="#f1f5f9" />
+  const getRealFieldImage = (phase: TrialPhase) => {
+    if (phase === 'TRL-6') {
+      return '/src/assets/real%20field%20trial%20in%20pushkar%20rajasthan%20in%20deseart.png';
+    }
+    if (phase === 'TRL-5') {
+      return '/src/assets/plot%20scale%20field%20trial%20of%20guar%20bajra%20mung%20crop.png';
+    }
+    return '/src/assets/field%20preperation%20and%20locatin%20information.png';
+  };
 
-        {/* Image Content depending on step and phase */}
-        {isTRL6 ? (
-          // TRL-6 Pushkar Real field images simulation
-          stepIndex === 0 ? (
-            // Phase 1: Tonnes of Sandy Desert prepping
-            <g>
-              <rect width="160" height="100" fill="url(#photoSand)" />
-              <path d="M 0 85 Q 35 45 80 80 T 160 70 L 160 100 L 0 100 T 0 85" fill="#b45309" opacity="0.6" />
-              <path d="M 0 50 L 160 55" stroke="#78350f" strokeWidth="1" strokeDasharray="2 1" />
-              {/* Raking human avatar */}
-              <circle cx="110" cy="50" r="4" fill="#1e293b" />
-              <line x1="110" y1="54" x2="110" y2="70" stroke="#1e293b" strokeWidth="2" />
-              <line x1="110" y1="58" x2="100" y2="65" stroke="#1e293b" strokeWidth="1.5" />
-              <line x1="100" y1="65" x2="95" y2="75" stroke="#1e293b" strokeWidth="1" /> {/* rake handle */}
-              <line x1="92" y1="75" x2="98" y2="75" stroke="#1e293b" strokeWidth="2" /> {/* rake tooth */}
-            </g>
-          ) : stepIndex === 1 ? (
-            // Phase 2: Mixing bioformulation inside water channel
-            <g>
-              <rect width="160" height="100" fill="url(#photoSoil)" />
-              {/* Trench */}
-              <path d="M 40 100 L 70 40 L 90 40 L 120 100 Z" fill="#451a03" />
-              {/* Water pouring */}
-              <path d="M 70 40 Q 80 50 80 100" stroke="#38bdf8" strokeWidth="12" fill="none" opacity="0.8" />
-              <path d="M 90 40 Q 82 50 80 100" stroke="#bae6fd" strokeWidth="4" fill="none" opacity="0.9" />
-              {/* Pouring bucket avatar */}
-              <path d="M 52 25 L 64 35 L 56 42 L 44 32 Z" fill="#94a3b8" />
-              <path d="M 56 32 Q 80 44 80 50" stroke="#e0f2fe" strokeWidth="3" fill="none" />
-            </g>
-          ) : stepIndex === 2 ? (
-            // Phase 3: Sowing wheat map
-            <g>
-              <rect width="160" height="100" fill="url(#photoSoil)" />
-              {/* Field lines grid */}
-              <path d="M 10 10 L 10 90 M 35 10 L 35 90 M 60 10 L 60 90 M 85 10 L 85 90 M 110 10 L 110 90 M 135 10 L 135 90" stroke="#d97706" strokeWidth="1" opacity="0.4" />
-              <path d="M 0 35 L 160 35 M 0 65 L 160 65" stroke="#d97706" strokeWidth="1" opacity="0.4" />
-              {/* Scientific grid board labels */}
-              <rect x="25" y="15" width="110" height="70" fill="white" rx="4" opacity="0.95" stroke="#658465" strokeWidth="1.2" />
-              <text x="35" y="32" fontSize="9" fontWeight="bold" fill="#1e293b">RESOL FIELD TRIAL</text>
-              <text x="35" y="44" fontSize="7" fill="#475569">Crop: Wheat-4079</text>
-              <text x="35" y="54" fontSize="6" fill="#15803d">Sponsor: CSIR, DST, BAYER</text>
-              <text x="35" y="66" fontSize="6" fontStyle="italic" fill="#c2410c">Location: Banseli, Rajasthan</text>
-              {/* little flags */}
-              <circle cx="120" cy="40" r="1.5" fill="#ef4444" />
-              <line x1="120" y1="40" x2="120" y2="48" stroke="#1f2937" strokeWidth="1" />
-            </g>
-          ) : stepIndex === 3 ? (
-            // Phase 4: Wheat green growing with minimal watering
-            <g>
-              <rect width="160" height="100" fill="#a3e635" />
-              <path d="M 0 100 L 40 40 L 70 100 M 50 100 L 90 20 L 130 100" fill="url(#photoSprout)" />
-              <path d="M 10 100 L 45 45 L 80 100 M 60 100 L 95 25 L 140 100" fill="url(#photoSprout)" opacity="0.8" />
-              {/* Water droplet minimal badge */}
-              <circle cx="135" cy="25" r="11" fill="#3b82f6" />
-              <text x="127" y="28" fontSize="8" fontWeight="bold" fill="white" fontFamily="monospace">3X</text>
-              <text x="128" y="36" fontSize="4.5" fill="#bfdbfe" fontFamily="sans-serif">WATERS</text>
-            </g>
-          ) : (
-            // Phase 5: Harvest golden crop grains
-            <g>
-              <rect width="160" height="100" fill="#fef08a" /> {/* golden grain fields */}
-              <path d="M 15 100 L 25 20 Q 28 5 35 30 M 45 100 L 55 15 Q 58 5 65 25 M 75 100 L 85 22 Q 88 5 95 30" stroke="#ca8a04" strokeWidth="2" fill="none" />
-              {/* Sacks of wheat harvested grains */}
-              <rect x="105" y="55" width="22" height="32" rx="4" fill="#cbd5e1" stroke="#94a3b8" />
-              <path d="M 105 55 Q 116 51 127 55" stroke="#94a3b8" fill="none" />
-              <circle cx="116" cy="68" r="4" fill="#a1a1aa" opacity="0.1" />
-              
-              <rect x="129" y="60" width="20" height="28" rx="4" fill="#e4e4e7" stroke="#cbd5e1" />
-              {/* Grains inside sacks */}
-              <ellipse cx="116" cy="54" rx="10" ry="4" fill="#d97706" />
-              <ellipse cx="139" cy="59" rx="9" ry="3" fill="#ca8a04" />
-            </g>
-          )
-        ) : (
-          // TRL-5 Pilot scale image simulation steps
-          stepIndex === 0 ? (
-            <g>
-              <rect width="160" height="100" fill="#cbd5e1" />
-              {/* Large industrial blending tub */}
-              <ellipse cx="80" cy="70" rx="45" ry="18" fill="#475569" />
-              <ellipse cx="80" cy="65" rx="43" ry="15" fill="#38bdf8" /> {/* active hydration */}
-              <path d="M 37 66 L 37 84 A 43 15 0 0 0 123 84 L 123 66" fill="#475569" />
-              {/* liquid lines */}
-              <path d="M 45 65 Q 80 72 115 65" stroke="#e0f2fe" strokeWidth="1" fill="none" opacity="0.5" />
-            </g>
-          ) : stepIndex === 1 ? (
-            <g>
-              <rect width="160" height="100" fill="url(#photoSand)" />
-              {/* Dividers grids */}
-              <line x1="80" y1="0" x2="80" y2="100" stroke="#b45309" strokeWidth="2" />
-              <line x1="0" y1="50" x2="160" y2="50" stroke="#b45309" strokeWidth="2" />
-              <text x="15" y="30" fontSize="10" fill="white" fontWeight="bold">Treated G1</text>
-              <text x="95" y="30" fontSize="10" fill="white" fontWeight="bold">Control G2</text>
-            </g>
-          ) : stepIndex === 2 ? (
-            <g>
-              <rect width="160" height="100" fill="url(#photoSand)" />
-              {/* Spray nozzle avatar */}
-              <line x1="80" y1="10" x2="80" y2="35" stroke="#4b5563" strokeWidth="3" />
-              <path d="M 72 35 L 88 35 L 80 44 Z" fill="#1f2937" />
-              {/* Droplets spray mist */}
-              <path d="M 80 44 L 40 85 M 80 44 L 60 85 M 80 44 L 80 85 M 80 44 L 100 85 M 80 44 L 120 85" stroke="#0ea5e9" strokeWidth="1.2" strokeDasharray="3 3" opacity="0.8" />
-            </g>
-          ) : stepIndex === 3 ? (
-            <g>
-              <rect width="160" height="100" fill="url(#photoSoil)" />
-              {/* seeds planted */}
-              <circle cx="35" cy="65" r="2.5" fill="#fcd34d" />
-              <circle cx="80" cy="55" r="2.5" fill="#fcd34d" />
-              <circle cx="125" cy="70" r="2.5" fill="#fcd34d" />
-            </g>
-          ) : (
-            <g>
-              <rect width="160" height="100" fill="url(#photoSoil)" />
-              {/* Guar green crop vertical leaves sprouts */}
-              <path d="M 35 100 Q 30 75 35 60 Q 38 45 32 35" stroke="#22c55e" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-              <path d="M 35 60 Q 45 52 48 40" stroke="#22c55e" strokeWidth="1.8" fill="none" />
-              <path d="M 80 100 Q 82 80 78 68 Q 74 55 81 42" stroke="#22c55e" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-            </g>
-          )
-        )}
+  const phaseToKeyResult = (phase: TrialPhase) => {
+    return phase === 'TRL-6'
+      ? '1,120 kg/acre wheat yield with only 3 irrigations vs 6 required normally'
+      : 'Guar, Bajra & Mung successfully cultivated with superior root development';
+  };
 
-        {/* GPS map camera text overlays replicating real field screenshot values */}
-        <rect x="5" y="72" width="150" height="23" fill="black/65" rx="2" />
-        <text x="10" y="80" fontSize="4.5" fill="white" fontFamily="monospace">GPS Camera: Banseli, Rajasthan, India</text>
-        <text x="10" y="86" fontSize="4" fill="#a1a1aa" fontFamily="monospace">Lat: {isTRL6 ? '26.521105°' : '26.521098°'} Long: 74.561076° | {isTRL6 ? 'Nov 2024' : 'Aug 2024'}</text>
-        <text x="10" y="92" fontSize="4" fill="#ca8a04" fontFamily="monospace">Elev: TRL-Level {phase}</text>
-      </svg>
+  const handlePreviousTrial = () => {
+    setActiveTrialIndex((prev) => (prev === 0 ? FIELD_TRIALS.length - 1 : prev - 1));
+    setActiveStepIdx(0);
+  };
+
+  const handleNextTrial = () => {
+    setActiveTrialIndex((prev) => (prev === FIELD_TRIALS.length - 1 ? 0 : prev + 1));
+    setActiveStepIdx(0);
+  };
+
+  const prevStep = () => {
+    setActiveStepIdx((prev) =>
+      prev === 0 ? currentTrial.detailedSteps.length - 1 : prev - 1,
     );
   };
 
-  // Internal carousel tracker for steps
-  const [activeStepIdx, setActiveStepIdx] = useState(0);
-
-  const prevStep = () => {
-    setActiveStepIdx((prev) => (prev === 0 ? currentTrial.detailedSteps.length - 1 : prev - 1));
+  const nextStep = () => {
+    setActiveStepIdx((prev) =>
+      prev === currentTrial.detailedSteps.length - 1 ? 0 : prev + 1,
+    );
   };
 
-  const nextStep = () => {
-    setActiveStepIdx((prev) => (prev === currentTrial.detailedSteps.length - 1 ? 0 : prev + 1));
+  const isTRL6 = currentTrial.phase === 'TRL-6';
+
+  const renderMockTrialPhoto = (_phase: TrialPhase, stepIndex: number) => {
+    return (
+      <div className="w-full h-full bg-sand-100 flex items-center justify-center">
+        <div className="w-[85%] h-[60%] rounded-2xl border border-sand-200 bg-white/70 shadow-sm flex flex-col items-center justify-center gap-2">
+          <div className="text-xs font-bold uppercase tracking-widest text-amber-700">Step {stepIndex + 1}</div>
+          <div className="text-[11px] text-slate-600 text-center px-3">
+            {currentTrial.detailedSteps[stepIndex]?.label}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const getPhaseDisplay = (phase: TrialPhase) => {
+    if (phase === 'TRL-6') return 'Real Field-Scale Trial (TRL-6)';
+    if (phase === 'TRL-5') return 'Pilot Scale Field Testing (TRL-5)';
+    return phase;
   };
 
   return (
-    <section className="pt-20 pb-20 bg-white">
+    <section className="pt-20 pb-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Section Header */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 25 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center max-w-3xl mx-auto mb-16 space-y-4"
+          className="max-w-4xl mx-auto mb-10 space-y-4 text-center"
         >
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight font-display">Field Trials & Scale-up Proof</h2>
-          <p className="text-base text-sand-500">
+          <h2 className="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight font-display leading-none">
+            Field Trials & Scale-up Proof
+          </h2>
+          <p className="text-lg text-sand-600 font-normal">
             Validated at multiple levels of technology readiness: TRL-5 controlled agricultural laboratory frames, leading to TRL-6 open desert crop harvest lines.
           </p>
         </motion.div>
 
-        {/* Toggle block tabs TRL-5 vs TRL-6 */}
-        <div className="flex justify-center p-1.5 rounded-2xl bg-sand-100 max-w-md mx-auto mb-16 shadow-inner border border-sand-200">
-          <button
-            onClick={() => {
-              setActiveTrialIndex(0);
-              setActiveStepIdx(0);
-            }}
-            id="trl5-toggle"
-            className={`flex-1 py-3 px-5 rounded-xl font-bold text-sm tracking-wide transition-all uppercase cursor-pointer ${
-              activeTrialIndex === 0 
-                ? 'bg-gradient-to-r from-clay-600 to-clay-800 text-white shadow-md' 
-                : 'text-sand-700 hover:text-clay-600'
-            }`}
-          >
-            TRL-5 Pilot Grid (Guar / Bajra)
-          </button>
-          
-          <button
-            onClick={() => {
-              setActiveTrialIndex(1);
-              setActiveStepIdx(0);
-            }}
-            id="trl6-toggle"
-            className={`flex-1 py-3 px-5 rounded-xl font-bold text-sm tracking-wide transition-all uppercase cursor-pointer ${
-              activeTrialIndex === 1 
-                ? 'bg-gradient-to-r from-clay-600 to-clay-800 text-white shadow-md' 
-                : 'text-sand-700 hover:text-clay-600'
-            }`}
-          >
-            TRL-6 Pushkar Field (Wheat)
-          </button>
-        </div>
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="flex justify-center mb-16"
+        >
+          <div className="inline-flex bg-[#f3f1e9] p-1.5 rounded-2xl border border-sand-200/80 shadow-sm overflow-hidden">
+            <button
+              onClick={() => {
+                setActiveTrialIndex(0);
+                setActiveStepIdx(0);
+              }}
+              className={`px-6 sm:px-8 py-3.5 rounded-xl font-bold text-xs sm:text-sm transition-all duration-300 whitespace-nowrap text-center flex flex-col items-center justify-center ${
+                activeTrialIndex === 0
+                  ? 'bg-[#9a5d35] text-white shadow-md'
+                  : 'text-sand-700 hover:text-slate-900 hover:bg-sand-200/50'
+              }`}
+            >
+              <span>TRL-5 PILOT GRID</span>
+              <span>(GUAR / BAJRA)</span>
+            </button>
+            <button
+              onClick={() => {
+                setActiveTrialIndex(1);
+                setActiveStepIdx(0);
+              }}
+              className={`px-6 sm:px-8 py-3.5 rounded-xl font-bold text-xs sm:text-sm transition-all duration-300 whitespace-nowrap text-center flex flex-col items-center justify-center ${
+                activeTrialIndex === 1
+                  ? 'bg-[#9a5d35] text-white shadow-md'
+                  : 'text-sand-700 hover:text-slate-900 hover:bg-sand-200/50'
+              }`}
+            >
+              <span>TRL-6 PUSHKAR FIELD</span>
+              <span>(WHEAT)</span>
+            </button>
+          </div>
+        </motion.div>
 
-        {/* Active trial segment showcase */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeTrialIndex}
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -15 }}
-            transition={{ duration: 0.4 }}
-            className="p-8 sm:p-12 rounded-3xl border border-sand-200 bg-[#fbfbf9]/75 shadow-lg"
-          >
-            
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-              
-              {/* Left Narrative: 7 columns */}
-              <div className="lg:col-span-7 text-left space-y-6">
-              
-              {/* Location and crops tags */}
-              <div className="flex flex-wrap gap-4 items-center">
-                <span className="px-3.5 py-1.5 rounded bg-sage-50 text-sage-800 border border-sage-200 text-xs font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
-                  <MapPin className="w-3.5 h-3.5" />
-                  <span>{currentTrial.location}</span>
-                </span>
-                
-                <span className="px-3.5 py-1.5 rounded bg-amber-50 text-amber-800 border border-amber-200 text-xs font-bold uppercase tracking-wider font-mono flex items-center gap-1.5">
-                  <Sprout className="w-3.5 h-3.5" />
-                  <span>{currentTrial.crops}</span>
-                </span>
+        {/* Main interactive field details layout card */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="rounded-3xl border border-sand-200 bg-white shadow-lg overflow-hidden"
+        >
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-0">
+            {/* Image Section */}
+            <div className="lg:col-span-6 bg-sand-50 relative min-h-[400px] lg:min-h-[500px] overflow-hidden">
+              <img
+                src={getRealFieldImage(currentTrial.phase)}
+                alt={`${currentTrial.phase} - ${currentTrial.title}`}
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+              />
 
-                {currentTrial.date && (
-                  <span className="px-3 py-1 text-xs font-bold text-sand-500 font-mono tracking-wide flex items-center gap-1.5">
-                    <Calendar className="w-3.5 h-3.5" />
-                    <span>{currentTrial.date}</span>
-                  </span>
-                )}
-              </div>
-
-              {/* Title & summary paragraph */}
-              <div className="space-y-3">
-                <h3 className="text-2xl sm:text-3xl font-extrabold text-[#1a160d] tracking-tight font-display">
-                  {currentTrial.title} ({currentTrial.phase})
-                </h3>
-                <p className="text-md text-sand-800 leading-relaxed font-normal">
-                  {currentTrial.description}
-                </p>
-              </div>
-
-              {/* Interactive step tracker checklist panel */}
-              <div className="space-y-3 pt-3 border-t border-sand-200/60 font-sans">
-                <span className="text-[10px] font-mono font-bold text-[#786637] uppercase tracking-widest block">Chronological Field Chronology:</span>
-                
-                <div className="space-y-2.5">
-                  {currentTrial.detailedSteps.map((step, idx) => {
-                    const isSelected = activeStepIdx === idx;
-                    return (
-                      <motion.div 
-                        key={step.label}
-                        initial={{ opacity: 0, x: -10 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.4, delay: idx * 0.08 }}
-                        onClick={() => setActiveStepIdx(idx)}
-                        className={`flex items-start gap-3.5 p-4 rounded-xl border cursor-pointer transition-all duration-300 ${
-                          isSelected 
-                            ? 'bg-white border-[#deb081] shadow-md translate-x-2' 
-                            : 'bg-white/40 border-sand-150 text-sand-700 hover:bg-white/60'
-                        }`}
-                      >
-                        <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold font-mono shrink-0 ${
-                          isSelected ? 'bg-clay-600 text-white' : 'bg-sand-200 text-sand-600'
-                        }`}>
-                          {idx + 1}
-                        </span>
-                        <div>
-                          <h4 className="font-bold text-xs sm:text-sm text-slate-800 leading-none">{step.label}</h4>
-                          <p className={`text-xs text-sand-500 font-normal leading-relaxed mt-1.5 overflow-hidden transition-all duration-300 ${isSelected ? 'max-h-20 opacity-100' : 'max-h-0 opacity-0'}`}>
-                            {step.detail}
-                          </p>
-                        </div>
-                      </motion.div>
-                    );
-                  })}
+              <div className="absolute top-6 left-6 z-10">
+                <div className={`px-5 py-2.5 backdrop-blur-md border text-sm font-bold rounded-full shadow-xl uppercase tracking-wider flex items-center gap-2 ${
+                  currentTrial.phase === 'TRL-6' 
+                    ? 'bg-orange-600/90 border-orange-400 text-white shadow-orange-500/30'
+                    : 'bg-emerald-600/90 border-emerald-400 text-white shadow-emerald-500/30'
+                }`}>
+                  <Sprout className="w-4 h-4" />
+                  {getPhaseDisplay(currentTrial.phase)}
                 </div>
               </div>
 
+              <div className="absolute bottom-6 left-6 z-10 bg-white/95 backdrop-blur rounded-xl p-3 shadow-lg">
+                <div className="flex items-center gap-2 text-slate-900">
+                  <MapPin className="w-4 h-4 text-orange-600 shrink-0" />
+                  <span className="text-xs font-semibold">{currentTrial.location}</span>
+                </div>
+              </div>
             </div>
 
-            {/* Right GPS photos visualization panel: 5 columns */}
-            <div className="lg:col-span-5 flex flex-col items-center">
-              <div className="w-full relative shadow-lg rounded-3xl overflow-hidden border border-sand-200 aspect-[4/3] bg-sand-100">
-                <AnimatePresence mode="wait">
-                  <motion.div 
-                    key={activeStepIdx + '-' + currentTrial.phase}
-                    initial={{ opacity: 0, scale: 0.96 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.96 }}
-                    transition={{ duration: 0.3 }}
-                    className="w-full h-full"
-                  >
-                    {renderMockTrialPhoto(currentTrial.phase, activeStepIdx)}
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-              
-              {/* Photo slide controller row */}
-              <div className="flex items-center gap-4 mt-6">
-                <button
-                  onClick={prevStep}
-                  id="prev-field-step"
-                  className="p-2 rounded-xl bg-white border border-sand-200 hover:bg-sand-50 text-sand-700 cursor-pointer shadow-sm transition-all"
-                  title="Previous Step"
-                >
-                  <ChevronLeft className="w-5 h-5" />
-                </button>
-                <span className="text-xs font-mono font-extrabold text-[#786637]">
-                  Step {activeStepIdx + 1} of {currentTrial.detailedSteps.length}
-                </span>
-                <button
-                  onClick={nextStep}
-                  id="next-field-step"
-                  className="p-2 rounded-xl bg-white border border-sand-200 hover:bg-sand-50 text-sand-700 cursor-pointer shadow-sm transition-all"
-                  title="Next Step"
-                >
-                  <ChevronRight className="w-5 h-5" />
-                </button>
-              </div>
+            {/* Content Section */}
+            <div className="lg:col-span-6 p-8 sm:p-10 flex flex-col justify-between">
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <h3 className="text-3xl font-extrabold text-slate-900 font-display">
+                    {currentTrial.title}
+                  </h3>
 
-              {/* TRL-6 Specific yield feedback block */}
-              {currentTrial.phase === 'TRL-6' && (
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.4, delay: 0.15 }}
-                  className="mt-8 p-4 rounded-2xl bg-sage-50 border border-sage-200 flex items-center gap-3.5 text-left w-full max-w-sm"
-                >
-                  <TrendingUp className="w-8 h-8 text-sage-600 bg-sage-100 p-1.5 rounded-xl border border-sage-200 shrink-0" />
-                  <div>
-                    <h4 className="text-xs font-extrabold text-[#15803d] uppercase tracking-wider font-mono">Real-world Outcome</h4>
-                    <p className="text-xs font-bold text-slate-800 leading-relaxed mt-1">First-ever successful wheat crop production in dry desert sands. Water cycles halved!</p>
+                  <div className="flex flex-wrap gap-3 pt-2">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold border border-emerald-200">
+                      <Sprout className="w-3.5 h-3.5" />
+                      {currentTrial.crops}
+                    </span>
+                    {currentTrial.date && (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold border border-blue-200">
+                        <Calendar className="w-3.5 h-3.5" />
+                        {currentTrial.date}
+                      </span>
+                    )}
                   </div>
-                </motion.div>
-              )}
+                </div>
 
+                <p className="text-sm text-sand-700 leading-relaxed font-normal">
+                  {currentTrial.description}
+                </p>
+
+                {/* Steps breakdown */}
+                <div className="space-y-3 pt-4 border-t border-sand-200">
+                  <span className="text-xs font-bold uppercase tracking-widest text-clay-600 font-mono block">
+                    Execution Steps
+                  </span>
+
+                  <div className="space-y-2 max-h-48 overflow-y-auto">
+                    {currentTrial.detailedSteps.map((step: Step, idx: number) => {
+                      const selected = idx === activeStepIdx;
+                      return (
+                        <motion.div
+                          key={`${step.label}-${idx}`}
+                          initial={{ opacity: 0, x: -10 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ duration: 0.3 }}
+                          onClick={() => setActiveStepIdx(idx)}
+                          className={`flex gap-2 text-xs cursor-pointer rounded-xl p-2 transition-colors border ${
+                            selected
+                              ? 'bg-white border-[#deb081] shadow-sm'
+                              : 'bg-white/40 border-transparent hover:bg-white/60'
+                          }`}
+                        >
+                          <div className="flex-shrink-0 mt-0.5">
+                            <CheckCircle2
+                              className={`w-4 h-4 ${selected ? 'text-emerald-600' : 'text-emerald-400'}`}
+                            />
+                          </div>
+                          <div>
+                            <span className="font-bold text-slate-800">{step.label}</span>
+                            <p className="text-sand-600">{step.detail}</p>
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Navigation & Key Result */}
+              <div className="pt-8 border-t border-sand-200 space-y-4">
+                <div className="p-4 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200">
+                  <div className="flex items-center gap-2 mb-1">
+                    <TrendingUp className="w-4 h-4 text-orange-600" />
+                    <span className="text-xs font-bold uppercase tracking-widest text-orange-700">
+                      Key Result
+                    </span>
+                  </div>
+                  <p className="text-sm font-bold text-slate-900">
+                    {phaseToKeyResult(currentTrial.phase)}
+                  </p>
+                </div>
+
+                <div className="flex items-center justify-between gap-3">
+                  <button
+                    onClick={handlePreviousTrial}
+                    className="p-2 rounded-lg border border-sand-200 hover:bg-sand-50 transition-colors"
+                    aria-label="Previous trial"
+                  >
+                    <ChevronLeft className="w-5 h-5 text-slate-600" />
+                  </button>
+
+                  <div className="flex gap-2">
+                    {FIELD_TRIALS.map((_, idx: number) => (
+                      <button
+                        key={idx}
+                        onClick={() => {
+                          setActiveTrialIndex(idx);
+                          setActiveStepIdx(0);
+                        }}
+                        className={`w-2 h-2 rounded-full transition-all ${
+                          idx === activeTrialIndex ? 'bg-orange-600 w-6' : 'bg-sand-300'
+                        }`}
+                        aria-label={`Trial ${idx + 1}`}
+                      />
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={handleNextTrial}
+                    className="p-2 rounded-lg border border-sand-200 hover:bg-sand-50 transition-colors"
+                    aria-label="Next trial"
+                  >
+                    <ChevronRight className="w-5 h-5 text-slate-600" />
+                  </button>
+                </div>
+
+                <AnimatePresence>
+                  <div className="mt-4 rounded-2xl overflow-hidden border border-sand-200 bg-sand-50">
+                    <div className="w-full aspect-[16/7] relative">
+                      <div className="absolute inset-0">
+                        <motion.div
+                          key={`${activeTrialIndex}-${activeStepIdx}-${currentTrial.phase}`}
+                          initial={{ opacity: 0, scale: 0.98 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.98 }}
+                          transition={{ duration: 0.2 }}
+                          className="w-full h-full"
+                        >
+                          {renderMockTrialPhoto(currentTrial.phase, activeStepIdx)}
+                        </motion.div>
+                      </div>
+                    </div>
+
+                    {/* Step controls */}
+                    <div className="flex items-center justify-between gap-3 p-4">
+                      <button
+                        onClick={prevStep}
+                        className="p-2 rounded-xl bg-white border border-sand-200 hover:bg-sand-50 text-sand-700 cursor-pointer shadow-sm transition-all"
+                        aria-label="Previous step"
+                      >
+                        <ChevronLeft className="w-5 h-5" />
+                      </button>
+
+                      <span className="text-xs font-mono font-extrabold text-[#786637]">
+                        Step {activeStepIdx + 1} of {currentTrial.detailedSteps.length}
+                      </span>
+
+                      <button
+                        onClick={nextStep}
+                        className="p-2 rounded-xl bg-white border border-sand-200 hover:bg-sand-50 text-sand-700 cursor-pointer shadow-sm transition-all"
+                        aria-label="Next step"
+                      >
+                        <ChevronRight className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+                </AnimatePresence>
+
+                {isTRL6 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    transition={{ duration: 0.3 }}
+                    className="mt-2 p-4 rounded-2xl bg-sage-50 border border-sage-200 flex items-center gap-3.5 text-left w-full"
+                  >
+                    <TrendingUp className="w-8 h-8 text-sage-600 bg-sage-100 p-1.5 rounded-xl border border-sage-200 shrink-0" />
+                    <div>
+                      <h4 className="text-xs font-extrabold text-[#15803d] uppercase tracking-wider font-mono">
+                        Real-world Outcome
+                      </h4>
+                      <p className="text-xs font-bold text-slate-800 leading-relaxed mt-1">
+                        First-ever successful wheat crop production in dry desert sands. Water cycles halved!
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
+              </div>
             </div>
-
           </div>
-
         </motion.div>
-        </AnimatePresence>
+
+        {/* 6. Magnificent Standalone YouTube Field Documentary Section (Exactly as Mockup) */} 
+        <div>  
+          <motion.div 
+            initial={{ opacity: 0, y: 45 }} 
+            whileInView={{ opacity: 1, y: 0 }} 
+            viewport={{ once: true }} 
+            transition={{ duration: 0.8 }} 
+            className="mt-24 p-8 sm:p-12 rounded-[2rem] border border-sand-200 bg-white shadow-sm hover:shadow-md transition-shadow" 
+          > 
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center"> 
+               
+              {/* Left Column: Descriptive text and action */} 
+              <div className="lg:col-span-5 text-left space-y-6 flex flex-col items-start"> 
+                 
+                {/* Green badge pill matching mockup */} 
+                <span className="px-3.5 py-1.5 rounded-md bg-[#f0f5ed] border border-[#dce6d7] text-[#34532b] text-[11px] font-mono font-bold uppercase tracking-wider flex items-center gap-2"> 
+                  <Video className="w-3.5 h-3.5 text-[#34532b]" /> 
+                  <span>Field Experiment Documentary</span> 
+                </span>  
+
+                {/* Paragraph matching mockup */} 
+                <p className="text-sm sm:text-base text-slate-600 font-normal leading-relaxed"> 
+                  Watch the official physical experiment recording proving soil matrix stability, sand particle coordination, germination, water savings, and wheat harvesting on the Rajasthan desert borders. 
+                </p>  
+
+                {/* Subdued compact anchor button */} 
+                <a  
+                  href="https://www.youtube.com/watch?v=oR-NqcqsGyA"  
+                  target="_blank"  
+                  rel="noopener noreferrer" 
+                  id="youtube-field-video" 
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-sand-50 text-xs text-slate-800 font-mono font-bold tracking-wide border border-sand-300 rounded-md shadow-sm transition-all" 
+                > 
+                  <span>Open Video in YouTube</span> 
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-3.5 h-3.5 stroke-slate-500"> 
+                    <line x1="7" y1="17" x2="17" y2="7"></line> 
+                    <polyline points="7 7 17 7 17 17"></polyline> 
+                  </svg> 
+                </a> 
+              </div>  
+
+              {/* Right Column: High-fidelity interactive simulated YouTube play space */} 
+              <div className="lg:col-span-7"> 
+                <a  
+                  href="https://www.youtube.com/watch?v=oR-NqcqsGyA"  
+                  target="_blank"  
+                  rel="noopener noreferrer" 
+                  className="group relative w-full aspect-video rounded-2xl bg-zinc-950 overflow-hidden border border-slate-200/80 shadow-md hover:shadow-xl transition-all block text-left animate-none" 
+                > 
+                  {/* Detailed responsive vector drawing mimicking original video screenshot of students in sand field */} 
+                  <div className="absolute inset-0"> 
+                    <svg viewBox="0 0 800 450" className="w-full h-full object-cover"> 
+                      {/* Sand base gradient */} 
+                      <defs> 
+                        <linearGradient id="sandDeep" x1="0%" y1="0%" x2="0%" y2="100%"> 
+                          <stop offset="0%" stopColor="#e2bc8a" /> 
+                          <stop offset="50%" stopColor="#d6aa70" /> 
+                          <stop offset="100%" stopColor="#be9054" /> 
+                        </linearGradient> 
+                      </defs>  
+
+                      {/* Backdrop/trees and horizon */} 
+                      <rect width="800" height="450" fill="#e9e0d3" /> 
+                       
+                      {/* Lush green bushes/trees boundary */} 
+                      <path d="M 0 145 C 100 120, 220 125, 340 140 C 460 155, 620 120, 800 135 L 800 240 L 0 240 Z" fill="#6a875a" /> 
+                      <path d="M 0 110 C 120 95, 280 115, 420 125 C 560 135, 680 100, 800 115 L 800 180 L 0 180 Z" fill="#506a42" opacity="0.4" /> 
+                       
+                      {/* electrical post with gray box/transformer detail */} 
+                      <line x1="280" y1="110" x2="280" y2="240" stroke="#485c3f" strokeWidth="2.5" /> 
+                      <rect x="272" y="155" width="16" height="22" fill="#9ca3af" stroke="#4b5563" strokeWidth="1" /> 
+                      <line x1="250" y1="115" x2="310" y2="115" stroke="#4b5563" strokeWidth="1" /> 
+                      <line x1="280" y1="115" x2="280" y2="155" stroke="#4b5563" strokeWidth="1" />  
+
+                      {/* Arid sand field ground floor */} 
+                      <rect y="210" width="800" height="240" fill="url(#sandDeep)" />  
+
+                      {/* Perspective deep furrows (trenches shown in the field trial video image) */} 
+                      <path d="M 120 450 L 260 210" stroke="#92622f" strokeWidth="3" opacity="0.3" /> 
+                      <path d="M 280 450 L 330 210" stroke="#92622f" strokeWidth="3" opacity="0.3" /> 
+                      <path d="M 420 450 L 400 210" stroke="#92622f" strokeWidth="3" opacity="0.3" /> 
+                      <path d="M 540 450 L 470 210" stroke="#92622f" strokeWidth="3" opacity="0.3" /> 
+                      <path d="M 680 450 L 550 210" stroke="#92622f" strokeWidth="3" opacity="0.3" />  
+
+                      {/* Alignment ropes & stake grids */} 
+                      <line x1="160" y1="380" x2="160" y2="420" stroke="#372514" strokeWidth="3" /> 
+                      <line x1="240" y1="365" x2="240" y2="400" stroke="#372514" strokeWidth="3" /> 
+                      <line x1="335" y1="345" x2="335" y2="375" stroke="#372514" strokeWidth="3" /> 
+                      <line x1="450" y1="330" x2="450" y2="360" stroke="#372514" strokeWidth="3" /> 
+                      <line x1="560" y1="320" x2="560" y2="350" stroke="#372514" strokeWidth="3" />  
+
+                      {/* String matrix system */} 
+                      <line x1="60" y1="385" x2="740" y2="335" stroke="#ffffff" strokeWidth="1.2" strokeDasharray="5 3" opacity="0.85" /> 
+                      <line x1="80" y1="410" x2="760" y2="355" stroke="#ffffff" strokeWidth="1.2" strokeDasharray="5 3" opacity="0.85" /> 
+                      <line x1="40" y1="355" x2="700" y2="310" stroke="#ffffff" strokeWidth="1" strokeDasharray="3 2" opacity="0.7" />  
+
+                      {/* Sowing Student 1 Silhouette / Figure (bending model in middle/left) */} 
+                      <g> 
+                        {/* head */} 
+                        <circle cx="515" cy="270" r="10.5" fill="#fcd34d" /> 
+                        <ellipse cx="513" cy="265" rx="10" ry="7" fill="#18181b" /> {/* hair */} 
+                         
+                        {/* shirt (Ochre) */} 
+                        <path d="M 515 278 C 532 258, 555 258, 570 268 C 555 288, 545 292, 532 292 Z" fill="#d97706" /> 
+                         
+                        {/* pants (Indigo) */} 
+                        <path d="M 552 284 L 568 335 L 554 338 L 542 300 Q 538 316 532 334 L 518 330 L 532 288 Z" fill="#1e1b4b" /> 
+                         
+                        {/* arms working under soil */} 
+                        <path d="M 514 278 L 500 310" stroke="#eab308" strokeWidth="5.5" strokeLinecap="round" /> 
+                      </g>  
+
+                      {/* Standing Student 2 Silhouette on the right (with hair & glasses) */} 
+                      <g> 
+                        {/* head & hair */} 
+                        <circle cx="658" cy="205" r="11" fill="#fcd34d" /> 
+                        <path d="M 648 194 C 654 188, 666 188, 670 198 L 668 221 Q 654 221 648 205 Z" fill="#27272a" /> 
+                         
+                        {/* shirt (Slate grey blue) */} 
+                        <path d="M 646 216 L 670 216 L 666 265 L 648 265 Z" fill="#5f8796" stroke="#5f8796" strokeWidth="2" strokeLinejoin="round" /> 
+                         
+                        {/* arms tracking parameters */} 
+                        <path d="M 650 218 Q 634 230 642 245" stroke="#fcd34d" strokeWidth="5" fill="none" strokeLinecap="round" /> 
+                        <path d="M 665 218 Q 675 228 668 242" stroke="#fcd34d" strokeWidth="5" fill="none" strokeLinecap="round" />  
+
+                        {/* pants (Blue) */} 
+                        <path d="M 648 266 L 644 345 L 654 345 L 658 290 L 660 345 L 670 345 L 666 266 Z" fill="#111827" /> 
+                      </g> 
+                    </svg> 
+                  </div>  
+
+                  {/* Dark transparent gradient overlay */} 
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/50" />  
+
+                  {/* Top Header Controls (Central University of Rajasthan Logo & EERG Lab text) */} 
+                  <div className="absolute top-4 left-4 flex items-center gap-3 select-none"> 
+                    {/* Integrated CURAJ Leaf Badge logo */} 
+                    <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center p-1 border border-emerald-500 shadow-sm shrink-0"> 
+                      <div className="w-full h-full rounded-full bg-gradient-to-br from-emerald-100 to-green-150 flex items-center justify-center text-emerald-700"> 
+                        <Leaf className="w-5 h-5 fill-emerald-600/20" /> 
+                      </div> 
+                    </div>  
+
+                    <div className="text-white drop-shadow-md"> 
+                      <h4 className="text-xs sm:text-sm font-semibold tracking-tight leading-tight"> 
+                        Desert Soilification Field Experiment video 
+                      </h4> 
+                      <p className="text-[10px] text-zinc-300 font-medium font-mono leading-none mt-0.5"> 
+                        EERG Laboratory 
+                      </p> 
+                    </div> 
+                  </div>  
+
+                  {/* Top Right: Bayer Corporate Logo in White Circular Frame */} 
+                  <div className="absolute top-4 right-4 text-white drop-shadow-md flex items-center justify-center"> 
+                    <div className="w-10 h-10 rounded-full bg-slate-900/60 backdrop-blur-sm border border-white/20 flex flex-col items-center justify-center p-0.5 leading-none shrink-0" title="Bayer Sponsor"> 
+                      <div className="text-[7px] font-mono tracking-widest font-extrabold text-[#94a3b8] scale-90 mb-[1px]">BAYER</div> 
+                      <div className="w-5 h-px bg-white/20 select-none" /> 
+                      <div className="text-[6px] font-bold text-emerald-400 mt-[1.5px] tracking-tight">SPONSOR</div> 
+                    </div> 
+                  </div>  
+
+                  {/* Giant Central Red YouTube Play Toggle */} 
+                  <div className="absolute inset-0 flex items-center justify-center"> 
+                    <div className="w-16 h-11 bg-[#ff0000] text-white flex items-center justify-center rounded-2xl shadow-xl transition-all duration-300 group-hover:bg-[#cc0000] group-hover:scale-110"> 
+                      <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 translate-x-[1px]"> 
+                        <path d="M8 5v14l11-7z" strokeLinejoin="miter" strokeWidth="1" /> 
+                      </svg> 
+                    </div> 
+                  </div>  
+
+                  {/* Bottom Controls Panel (Share Indicator, Clock, Watch on YouTube Button) */} 
+                  <div className="absolute bottom-12 inset-x-0 px-4 flex justify-between items-center text-white/90"> 
+                     
+                    {/* Action toggles bottom left */} 
+                    <div className="flex items-center gap-4"> 
+                      {/* Curved share arrow */} 
+                      <button className="p-1.5 hover:text-white transition-all cursor-pointer" title="Share Video"> 
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4"> 
+                          <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" /> 
+                          <polyline points="16 6 12 2 8 6" /> 
+                          <line x1="12" y1="2" x2="12" y2="15" /> 
+                        </svg> 
+                      </button> 
+                       
+                      {/* Clock icon */} 
+                      <button className="p-1.5 hover:text-white transition-all cursor-pointer" title="Watch Later"> 
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4"> 
+                          <circle cx="12" cy="12" r="10" /> 
+                          <polyline points="12 6 12 12 16 14" /> 
+                        </svg> 
+                      </button> 
+                    </div>  
+
+                    {/* Translucient Watch on YouTube bottom-right badge */} 
+                    <div className="flex items-center gap-1.5 bg-black/60 px-3 py-1.5 rounded-md text-xs font-semibold backdrop-blur-xs select-none border border-white/5 cursor-pointer"> 
+                      <span className="text-[10px] text-zinc-300 font-normal">Watch on</span> 
+                      <span className="inline-flex items-center gap-0.5 font-bold tracking-tight text-white scale-95 origin-left"> 
+                        {/* Small red triangle */} 
+                        <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5 text-red-600 inline"> 
+                          <path d="M8 5v14l11-7z" /> 
+                        </svg> 
+                        <span>YouTube</span> 
+                      </span> 
+                    </div>  
+
+                  </div>  
+
+                  {/* Dark Blue Static Title Base Strip matching User image */} 
+                  <div className="absolute bottom-0 inset-x-0 h-9 bg-[#13224b] border-t border-blue-950/40 flex items-center justify-center"> 
+                    <span className="text-white text-xs font-bold italic font-serif tracking-wide select-none"> 
+                      Seed Sowing (Mung, Guar and Pearl Millet) 
+                    </span> 
+                  </div>  
+
+                </a> 
+              </div>  
+
+            </div> 
+          </motion.div> 
+        </div>
 
       </div>
     </section>
   );
 }
+///////////////////////////////////////////////////////////////
+// /**
+//  * @license
+//  * SPDX-License-Identifier: Apache-2.0
+//  */
+
+// import React, { useState } from 'react';
+// import { motion, AnimatePresence } from 'motion/react';
+// import {
+//   Sprout,
+//   MapPin,
+//   Calendar,
+//   ChevronRight,
+//   ChevronLeft,
+//   CheckCircle2,
+//   TrendingUp,
+//   Video, // Added for the YouTube Section badge
+//   Leaf,  // Added for the University logo badge
+// } from 'lucide-react';
+// import { FIELD_TRIALS } from '../data';
+
+// type Trial = (typeof FIELD_TRIALS)[number];
+// type TrialPhase = Trial['phase'];
+// type Step = Trial['detailedSteps'][number];
+
+// export default function FieldTrials() {
+//   const [activeTrialIndex, setActiveTrialIndex] = useState(1);
+//   const [activeStepIdx, setActiveStepIdx] = useState(0);
+  
+//   // Local state to toggle between YouTube preview thumbnail and live video playback
+//   const [videoPlaying, setVideoPlaying] = useState(false);
+
+//   const currentTrial: Trial = FIELD_TRIALS[activeTrialIndex];
+
+//   const getRealFieldImage = (phase: TrialPhase) => {
+//     if (phase === 'TRL-6') {
+//       return '/src/assets/real%20field%20trial%20in%20pushkar%20rajasthan%20in%20deseart.png';
+//     }
+//     if (phase === 'TRL-5') {
+//       return '/src/assets/plot%20scale%20field%20trial%20of%20guar%20bajra%20mung%20crop.png';
+//     }
+//     return '/src/assets/field%20preperation%20and%20locatin%20information.png';
+//   };
+
+//   const phaseToKeyResult = (phase: TrialPhase) => {
+//     return phase === 'TRL-6'
+//       ? '1,120 kg/acre wheat yield with only 3 irrigations vs 6 required normally'
+//       : 'Guar, Bajra & Mung successfully cultivated with superior root development';
+//   };
+
+//   const handlePreviousTrial = () => {
+//     setActiveTrialIndex((prev) => (prev === 0 ? FIELD_TRIALS.length - 1 : prev - 1));
+//     setActiveStepIdx(0);
+//   };
+
+//   const handleNextTrial = () => {
+//     setActiveTrialIndex((prev) => (prev === FIELD_TRIALS.length - 1 ? 0 : prev + 1));
+//     setActiveStepIdx(0);
+//   };
+
+//   const prevStep = () => {
+//     setActiveStepIdx((prev) =>
+//       prev === 0 ? currentTrial.detailedSteps.length - 1 : prev - 1,
+//     );
+//   };
+
+//   const nextStep = () => {
+//     setActiveStepIdx((prev) =>
+//       prev === currentTrial.detailedSteps.length - 1 ? 0 : prev + 1,
+//     );
+//   };
+
+//   const isTRL6 = currentTrial.phase === 'TRL-6';
+
+//   const renderMockTrialPhoto = (_phase: TrialPhase, stepIndex: number) => {
+//     return (
+//       <div className="w-full h-full bg-sand-100 flex items-center justify-center">
+//         <div className="w-[85%] h-[60%] rounded-2xl border border-sand-200 bg-white/70 shadow-sm flex flex-col items-center justify-center gap-2">
+//           <div className="text-xs font-bold uppercase tracking-widest text-amber-700">Step {stepIndex + 1}</div>
+//           <div className="text-[11px] text-slate-600 text-center px-3">
+//             {currentTrial.detailedSteps[stepIndex]?.label}
+//           </div>
+//         </div>
+//       </div>
+//     );
+//   };
+
+//   const getPhaseDisplay = (phase: TrialPhase) => {
+//     if (phase === 'TRL-6') return 'Real Field-Scale Trial (TRL-6)';
+//     if (phase === 'TRL-5') return 'Pilot Scale Field Testing (TRL-5)';
+//     return phase;
+//   };
+
+//   return (
+//     <section className="pt-20 pb-24 bg-white">
+//       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+//         <motion.div
+//           initial={{ opacity: 0, y: 25 }}
+//           whileInView={{ opacity: 1, y: 0 }}
+//           viewport={{ once: true }}
+//           transition={{ duration: 0.6 }}
+//           className="max-w-4xl mx-auto mb-10 space-y-4 text-center"
+//         >
+//           <h2 className="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight font-display leading-none">
+//             Field Trials & Scale-up Proof
+//           </h2>
+//           <p className="text-lg text-sand-600 font-normal">
+//             Validated at multiple levels of technology readiness: TRL-5 controlled agricultural laboratory frames, leading to TRL-6 open desert crop harvest lines.
+//           </p>
+//         </motion.div>
+
+//         <motion.div 
+//           initial={{ opacity: 0, y: 20 }}
+//           whileInView={{ opacity: 1, y: 0 }}
+//           viewport={{ once: true }}
+//           transition={{ duration: 0.6, delay: 0.2 }}
+//           className="flex justify-center mb-16"
+//         >
+//           <div className="inline-flex bg-[#f3f1e9] p-1.5 rounded-2xl border border-sand-200/80 shadow-sm overflow-hidden">
+//             <button
+//               onClick={() => {
+//                 setActiveTrialIndex(0);
+//                 setActiveStepIdx(0);
+//               }}
+//               className={`px-6 sm:px-8 py-3.5 rounded-xl font-bold text-xs sm:text-sm transition-all duration-300 whitespace-nowrap text-center flex flex-col items-center justify-center ${
+//                 activeTrialIndex === 0
+//                   ? 'bg-[#9a5d35] text-white shadow-md'
+//                   : 'text-sand-700 hover:text-slate-900 hover:bg-sand-200/50'
+//               }`}
+//             >
+//               <span>TRL-5 PILOT GRID</span>
+//               <span>(GUAR / BAJRA)</span>
+//             </button>
+//             <button
+//               onClick={() => {
+//                 setActiveTrialIndex(1);
+//                 setActiveStepIdx(0);
+//               }}
+//               className={`px-6 sm:px-8 py-3.5 rounded-xl font-bold text-xs sm:text-sm transition-all duration-300 whitespace-nowrap text-center flex flex-col items-center justify-center ${
+//                 activeTrialIndex === 1
+//                   ? 'bg-[#9a5d35] text-white shadow-md'
+//                   : 'text-sand-700 hover:text-slate-900 hover:bg-sand-200/50'
+//               }`}
+//             >
+//               <span>TRL-6 PUSHKAR FIELD</span>
+//               <span>(WHEAT)</span>
+//             </button>
+//           </div>
+//         </motion.div>
+
+//         {/* Main interactive field details layout card */}
+//         <motion.div
+//           initial={{ opacity: 0, y: 40 }}
+//           whileInView={{ opacity: 1, y: 0 }}
+//           viewport={{ once: true }}
+//           transition={{ duration: 0.8 }}
+//           className="rounded-3xl border border-sand-200 bg-white shadow-lg overflow-hidden"
+//         >
+//           <div className="grid grid-cols-1 lg:grid-cols-12 gap-0">
+//             {/* Image Section */}
+//             <div className="lg:col-span-6 bg-sand-50 relative min-h-[400px] lg:min-h-[500px] overflow-hidden">
+//               <img
+//                 src={getRealFieldImage(currentTrial.phase)}
+//                 alt={`${currentTrial.phase} - ${currentTrial.title}`}
+//                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+//               />
+
+//               <div className="absolute top-6 left-6 z-10">
+//                 <div className={`px-5 py-2.5 backdrop-blur-md border text-sm font-bold rounded-full shadow-xl uppercase tracking-wider flex items-center gap-2 ${
+//                   currentTrial.phase === 'TRL-6' 
+//                     ? 'bg-orange-600/90 border-orange-400 text-white shadow-orange-500/30'
+//                     : 'bg-emerald-600/90 border-emerald-400 text-white shadow-emerald-500/30'
+//                 }`}>
+//                   <Sprout className="w-4 h-4" />
+//                   {getPhaseDisplay(currentTrial.phase)}
+//                 </div>
+//               </div>
+
+//               <div className="absolute bottom-6 left-6 z-10 bg-white/95 backdrop-blur rounded-xl p-3 shadow-lg">
+//                 <div className="flex items-center gap-2 text-slate-900">
+//                   <MapPin className="w-4 h-4 text-orange-600 shrink-0" />
+//                   <span className="text-xs font-semibold">{currentTrial.location}</span>
+//                 </div>
+//               </div>
+//             </div>
+
+//             {/* Content Section */}
+//             <div className="lg:col-span-6 p-8 sm:p-10 flex flex-col justify-between">
+//               <div className="space-y-6">
+//                 <div className="space-y-2">
+//                   <h3 className="text-3xl font-extrabold text-slate-900 font-display">
+//                     {currentTrial.title}
+//                   </h3>
+
+//                   <div className="flex flex-wrap gap-3 pt-2">
+//                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold border border-emerald-200">
+//                       <Sprout className="w-3.5 h-3.5" />
+//                       {currentTrial.crops}
+//                     </span>
+//                     {currentTrial.date && (
+//                       <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold border border-blue-200">
+//                         <Calendar className="w-3.5 h-3.5" />
+//                         {currentTrial.date}
+//                       </span>
+//                     )}
+//                   </div>
+//                 </div>
+
+//                 <p className="text-sm text-sand-700 leading-relaxed font-normal">
+//                   {currentTrial.description}
+//                 </p>
+
+//                 {/* Steps breakdown */}
+//                 <div className="space-y-3 pt-4 border-t border-sand-200">
+//                   <span className="text-xs font-bold uppercase tracking-widest text-clay-600 font-mono block">
+//                     Execution Steps
+//                   </span>
+
+//                   <div className="space-y-2 max-h-48 overflow-y-auto">
+//                     {currentTrial.detailedSteps.map((step: Step, idx: number) => {
+//                       const selected = idx === activeStepIdx;
+//                       return (
+//                         <motion.div
+//                           key={`${step.label}-${idx}`}
+//                           initial={{ opacity: 0, x: -10 }}
+//                           whileInView={{ opacity: 1, x: 0 }}
+//                           viewport={{ once: true }}
+//                           transition={{ duration: 0.3 }}
+//                           onClick={() => setActiveStepIdx(idx)}
+//                           className={`flex gap-2 text-xs cursor-pointer rounded-xl p-2 transition-colors border ${
+//                             selected
+//                               ? 'bg-white border-[#deb081] shadow-sm'
+//                               : 'bg-white/40 border-transparent hover:bg-white/60'
+//                           }`}
+//                         >
+//                           <div className="flex-shrink-0 mt-0.5">
+//                             <CheckCircle2
+//                               className={`w-4 h-4 ${selected ? 'text-emerald-600' : 'text-emerald-400'}`}
+//                             />
+//                           </div>
+//                           <div>
+//                             <span className="font-bold text-slate-800">{step.label}</span>
+//                             <p className="text-sand-600">{step.detail}</p>
+//                           </div>
+//                         </motion.div>
+//                       );
+//                     })}
+//                   </div>
+//                 </div>
+//               </div>
+
+//               {/* Navigation & Key Result */}
+//               <div className="pt-8 border-t border-sand-200 space-y-4">
+//                 <div className="p-4 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200">
+//                   <div className="flex items-center gap-2 mb-1">
+//                     <TrendingUp className="w-4 h-4 text-orange-600" />
+//                     <span className="text-xs font-bold uppercase tracking-widest text-orange-700">
+//                       Key Result
+//                     </span>
+//                   </div>
+//                   <p className="text-sm font-bold text-slate-900">
+//                     {phaseToKeyResult(currentTrial.phase)}
+//                   </p>
+//                 </div>
+
+//                 <div className="flex items-center justify-between gap-3">
+//                   <button
+//                     onClick={handlePreviousTrial}
+//                     className="p-2 rounded-lg border border-sand-200 hover:bg-sand-50 transition-colors"
+//                     aria-label="Previous trial"
+//                   >
+//                     <ChevronLeft className="w-5 h-5 text-slate-600" />
+//                   </button>
+
+//                   <div className="flex gap-2">
+//                     {FIELD_TRIALS.map((_, idx: number) => (
+//                       <button
+//                         key={idx}
+//                         onClick={() => {
+//                           setActiveTrialIndex(idx);
+//                           setActiveStepIdx(0);
+//                         }}
+//                         className={`w-2 h-2 rounded-full transition-all ${
+//                           idx === activeTrialIndex ? 'bg-orange-600 w-6' : 'bg-sand-300'
+//                         }`}
+//                         aria-label={`Trial ${idx + 1}`}
+//                       />
+//                     ))}
+//                   </div>
+
+//                   <button
+//                     onClick={handleNextTrial}
+//                     className="p-2 rounded-lg border border-sand-200 hover:bg-sand-50 transition-colors"
+//                     aria-label="Next trial"
+//                   >
+//                     <ChevronRight className="w-5 h-5 text-slate-600" />
+//                   </button>
+//                 </div>
+
+//                 <AnimatePresence>
+//                   <div className="mt-4 rounded-2xl overflow-hidden border border-sand-200 bg-sand-50">
+//                     <div className="w-full aspect-[16/7] relative">
+//                       <div className="absolute inset-0">
+//                         <motion.div
+//                           key={`${activeTrialIndex}-${activeStepIdx}-${currentTrial.phase}`}
+//                           initial={{ opacity: 0, scale: 0.98 }}
+//                           animate={{ opacity: 1, scale: 1 }}
+//                           exit={{ opacity: 0, scale: 0.98 }}
+//                           transition={{ duration: 0.2 }}
+//                           className="w-full h-full"
+//                         >
+//                           {renderMockTrialPhoto(currentTrial.phase, activeStepIdx)}
+//                         </motion.div>
+//                       </div>
+//                     </div>
+
+//                     {/* Step controls */}
+//                     <div className="flex items-center justify-between gap-3 p-4">
+//                       <button
+//                         onClick={prevStep}
+//                         className="p-2 rounded-xl bg-white border border-sand-200 hover:bg-sand-50 text-sand-700 cursor-pointer shadow-sm transition-all"
+//                         aria-label="Previous step"
+//                       >
+//                         <ChevronLeft className="w-5 h-5" />
+//                       </button>
+
+//                       <span className="text-xs font-mono font-extrabold text-[#786637]">
+//                         Step {activeStepIdx + 1} of {currentTrial.detailedSteps.length}
+//                       </span>
+
+//                       <button
+//                         onClick={nextStep}
+//                         className="p-2 rounded-xl bg-white border border-sand-200 hover:bg-sand-50 text-sand-700 cursor-pointer shadow-sm transition-all"
+//                         aria-label="Next step"
+//                       >
+//                         <ChevronRight className="w-5 h-5" />
+//                       </button>
+//                     </div>
+//                   </div>
+//                 </AnimatePresence>
+
+//                 {isTRL6 && (
+//                   <motion.div
+//                     initial={{ opacity: 0, y: 10 }}
+//                     animate={{ opacity: 1, y: 0 }}
+//                     exit={{ opacity: 0, y: 10 }}
+//                     transition={{ duration: 0.3 }}
+//                     className="mt-2 p-4 rounded-2xl bg-sage-50 border border-sage-200 flex items-center gap-3.5 text-left w-full"
+//                   >
+//                     <TrendingUp className="w-8 h-8 text-sage-600 bg-sage-100 p-1.5 rounded-xl border border-sage-200 shrink-0" />
+//                     <div>
+//                       <h4 className="text-xs font-extrabold text-[#15803d] uppercase tracking-wider font-mono">
+//                         Real-world Outcome
+//                       </h4>
+//                       <p className="text-xs font-bold text-slate-800 leading-relaxed mt-1">
+//                         First-ever successful wheat crop production in dry desert sands. Water cycles halved!
+//                       </p>
+//                     </div>
+//                   </motion.div>
+//                 )}
+//               </div>
+//             </div>
+//           </div>
+//         </motion.div>
+
+//         {/* 6. Magnificent Standalone YouTube Field Documentary Section */} 
+//         <div>  
+//           <motion.div 
+//             initial={{ opacity: 0, y: 45 }} 
+//             whileInView={{ opacity: 1, y: 0 }} 
+//             viewport={{ once: true }} 
+//             transition={{ duration: 0.8 }} 
+//             className="mt-24 p-8 sm:p-12 rounded-[2rem] border border-sand-200 bg-white shadow-sm hover:shadow-md transition-shadow" 
+//           > 
+//             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center"> 
+               
+//               {/* Left Column: Descriptive text and action */} 
+//               <div className="lg:col-span-5 text-left space-y-6 flex flex-col items-start"> 
+                 
+//                 {/* Green badge pill matching mockup */} 
+//                 <span className="px-3.5 py-1.5 rounded-md bg-[#f0f5ed] border border-[#dce6d7] text-[#34532b] text-[11px] font-mono font-bold uppercase tracking-wider flex items-center gap-2"> 
+//                   <Video className="w-3.5 h-3.5 text-[#34532b]" /> 
+//                   <span>Field Experiment Documentary</span> 
+//                 </span>  
+
+//                 {/* Paragraph matching mockup */} 
+//                 <p className="text-sm sm:text-base text-slate-600 font-normal leading-relaxed"> 
+//                   Watch the official physical experiment recording proving soil matrix stability, sand particle coordination, germination, water savings, and wheat harvesting on the Rajasthan desert borders. 
+//                 </p>  
+
+//                 {/* Subdued compact anchor button */} 
+//                 <a  
+//                   href="https://www.youtube.com/watch?v=oR-NqcqsGyA"  
+//                   target="_blank"  
+//                   rel="noopener noreferrer" 
+//                   id="youtube-field-video" 
+//                   className="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-sand-50 text-xs text-slate-800 font-mono font-bold tracking-wide border border-sand-300 rounded-md shadow-sm transition-all" 
+//                 > 
+//                   <span>Open Video in YouTube</span> 
+//                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-3.5 h-3.5 stroke-slate-500"> 
+//                     <line x1="7" y1="17" x2="17" y2="7"></line> 
+//                     <polyline points="7 7 17 7 17 17"></polyline> 
+//                   </svg> 
+//                 </a> 
+//               </div>  
+
+//               {/* Right Column: Interactive YouTube play container */} 
+//               <div className="lg:col-span-7"> 
+//                 <div className="relative w-full aspect-video rounded-2xl bg-zinc-950 overflow-hidden border border-slate-200/80 shadow-md hover:shadow-xl transition-all text-left"> 
+//                   {videoPlaying ? (
+//                     /* Embedded Video Iframe plays on click */
+//                     <iframe
+//                       src="https://www.youtube.com/embed/oR-NqcqsGyA?autoplay=1"
+//                       title="Desert Soilification Field Experiment Documentary"
+//                       className="absolute inset-0 w-full h-full"
+//                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+//                       allowFullScreen
+//                     ></iframe>
+//                   ) : (
+//                     /* Lazy loaded Preview Card */
+//                     <div 
+//                       onClick={() => setVideoPlaying(true)}
+//                       className="group relative w-full h-full cursor-pointer"
+//                     >
+//                       {/* Thumbnail loaded directly from YouTube */}
+//                       <img 
+//                         src="https://img.youtube.com/vi/oR-NqcqsGyA/maxresdefault.jpg"
+//                         alt="Desert Soilification Field Experiment video thumbnail"
+//                         className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+//                         onError={(e) => {
+//                           // Fallback to high quality standard preview if maxres is unavailable
+//                           e.currentTarget.src = "https://img.youtube.com/vi/oR-NqcqsGyA/hqdefault.jpg";
+//                         }}
+//                       />
+
+//                       {/* Dark transparent gradient overlay */} 
+//                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/50" />  
+
+//                       {/* Top Header Controls (Central University of Rajasthan Logo & EERG Lab text) */} 
+//                       <div className="absolute top-4 left-4 flex items-center gap-3 select-none"> 
+//                         {/* Integrated CURAJ Leaf Badge logo */} 
+//                         <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center p-1 border border-emerald-500 shadow-sm shrink-0"> 
+//                           <div className="w-full h-full rounded-full bg-gradient-to-br from-emerald-100 to-green-150 flex items-center justify-center text-emerald-700"> 
+//                             <Leaf className="w-5 h-5 fill-emerald-600/20" /> 
+//                           </div> 
+//                         </div>  
+
+//                         <div className="text-white drop-shadow-md"> 
+//                           <h4 className="text-xs sm:text-sm font-semibold tracking-tight leading-tight"> 
+//                             Desert Soilification Field Experiment video 
+//                           </h4> 
+//                           <p className="text-[10px] text-zinc-300 font-medium font-mono leading-none mt-0.5"> 
+//                             EERG Laboratory 
+//                           </p> 
+//                         </div> 
+//                       </div>  
+
+//                       {/* Top Right: Bayer Corporate Logo in White Circular Frame */} 
+//                       <div className="absolute top-4 right-4 text-white drop-shadow-md flex items-center justify-center"> 
+//                         <div className="w-10 h-10 rounded-full bg-slate-900/60 backdrop-blur-sm border border-white/20 flex flex-col items-center justify-center p-0.5 leading-none shrink-0" title="Bayer Sponsor"> 
+//                           <div className="text-[7px] font-mono tracking-widest font-extrabold text-[#94a3b8] scale-90 mb-[1px]">BAYER</div> 
+//                           <div className="w-5 h-px bg-white/20 select-none" /> 
+//                           <div className="text-[6px] font-bold text-emerald-400 mt-[1.5px] tracking-tight">SPONSOR</div> 
+//                         </div> 
+//                       </div>  
+
+//                       {/* Giant Central Red YouTube Play Toggle */} 
+//                       <div className="absolute inset-0 flex items-center justify-center"> 
+//                         <div className="w-16 h-11 bg-[#ff0000] text-white flex items-center justify-center rounded-2xl shadow-xl transition-all duration-300 group-hover:bg-[#cc0000] group-hover:scale-110"> 
+//                           <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 translate-x-[1px]"> 
+//                             <path d="M8 5v14l11-7z" strokeLinejoin="miter" strokeWidth="1" /> 
+//                           </svg> 
+//                         </div> 
+//                       </div>  
+
+//                       {/* Bottom Controls Panel (Share Indicator, Clock, Watch on YouTube Button) */} 
+//                       <div className="absolute bottom-12 inset-x-0 px-4 flex justify-between items-center text-white/90"> 
+                         
+//                         {/* Action toggles bottom left */} 
+//                         <div className="flex items-center gap-4"> 
+//                           {/* Curved share arrow */} 
+//                           <button className="p-1.5 hover:text-white transition-all cursor-pointer" title="Share Video"> 
+//                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4"> 
+//                               <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" /> 
+//                               <polyline points="16 6 12 2 8 6" /> 
+//                               <line x1="12" y1="2" x2="12" y2="15" /> 
+//                             </svg> 
+//                           </button> 
+                           
+//                           {/* Clock icon */} 
+//                           <button className="p-1.5 hover:text-white transition-all cursor-pointer" title="Watch Later"> 
+//                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4"> 
+//                               <circle cx="12" cy="12" r="10" /> 
+//                               <polyline points="12 6 12 12 16 14" /> 
+//                             </svg> 
+//                           </button> 
+//                         </div>  
+
+//                         {/* Translucent Watch on YouTube bottom-right badge */} 
+//                         <div className="flex items-center gap-1.5 bg-black/60 px-3 py-1.5 rounded-md text-xs font-semibold backdrop-blur-xs select-none border border-white/5 cursor-pointer"> 
+//                           <span className="text-[10px] text-zinc-300 font-normal">Watch on</span> 
+//                           <span className="inline-flex items-center gap-0.5 font-bold tracking-tight text-white scale-95 origin-left"> 
+//                             {/* Small red triangle */} 
+//                             <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5 text-red-600 inline"> 
+//                               <path d="M8 5v14l11-7z" /> 
+//                             </svg> 
+//                             <span>YouTube</span> 
+//                           </span> 
+//                         </div>  
+
+//                       </div>  
+
+//                       {/* Dark Blue Static Title Base Strip matching User image */} 
+//                       <div className="absolute bottom-0 inset-x-0 h-9 bg-[#13224b] border-t border-blue-950/40 flex items-center justify-center"> 
+//                         <span className="text-white text-xs font-bold italic font-serif tracking-wide select-none"> 
+//                           Seed Sowing (Mung, Guar and Pearl Millet) 
+//                         </span> 
+//                       </div>  
+//                     </div>
+//                   )} 
+//                 </div> 
+//               </div>  
+
+//             </div> 
+//           </motion.div> 
+//         </div>
+
+//       </div>
+//     </section>
+//   );
+// }

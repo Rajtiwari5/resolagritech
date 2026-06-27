@@ -25,13 +25,7 @@ export default function Footer({ onTabChange }: FooterProps) {
           {/* Brand block (Column 5) */}
           <div className="md:col-span-5 space-y-5">
             <div className="flex items-center gap-2">
-              <Logo className="w-10 h-10" showText={false} />
-              <div className="flex flex-col text-left">
-                <span className="text-xl font-bold font-display tracking-tight text-white leading-none">
-                  <span className="text-clay-500">RE</span>SOL
-                </span>
-                <span className="text-[9px] font-mono text-sand-400 font-bold tracking-widest mt-0.5">AGRITECH PRIVATE LIMITED</span>
-              </div>
+              <Logo className="w-24 h-24" showText={false} />
             </div>
 
             <p className="text-xs text-sand-300 leading-relaxed font-normal max-w-sm">

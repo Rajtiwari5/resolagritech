@@ -6,7 +6,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Menu, X, Sprout, Users, HelpCircle, Award, Mail, Info, Leaf } from 'lucide-react';
-import Logo from './Logo';
+import logo from "../assets/logo.png";
 
 interface NavbarProps {
   currentTab: string;
@@ -23,9 +23,17 @@ export default function Navbar({ currentTab, onTabChange, tabs }: NavbarProps) {
         <div className="flex items-center justify-between h-20">
           
           {/* Logo element */}
-          <div onClick={() => onTabChange('home-about')} className="cursor-pointer">
+          {/* <div onClick={() => onTabChange('home-about')} className="cursor-pointer">
             <Logo className="w-11 h-11" />
-          </div>
+          </div> */}
+
+<div onClick={() => onTabChange('home-about')} className="cursor-pointer">
+  <img
+    src={logo}
+    alt="Resol Agritech Logo"
+    className="w-20 h-20 object-contain"
+  />
+</div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-1.5" id="nav-desktop">

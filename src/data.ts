@@ -44,7 +44,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
     ],
     avatarSeed: "diksha",
     socials: {
-      email: "diksha.kumari@resolagritech.com",
+      
       linkedin: "https://linkedin.com/in/diksha-kumari-resol"
     }
   },
@@ -60,7 +60,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
     ],
     avatarSeed: "akhil",
     socials: {
-      email: "akhil.agrawal@curaj.ac.in",
+      
       linkedin: "https://linkedin.com/in/dr-akhil-agrawal"
     }
   },
