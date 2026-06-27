@@ -7,6 +7,12 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Award, Leaf, Newspaper, Video, MessageSquareQuote, ShieldAlert, ArrowUpRight } from 'lucide-react';
 import { AWARDS_LIST, MEDIA_COVERAGE } from '../data';
 
+// Import images statically for Vite production compilation
+import theHinduNewsImg from '../assets/the hindu news.jpg';
+import hindiNewsImg from '../assets/hindi news.jpeg';
+import innovationChallengeImg from '../assets/1 price innovatin challange.jpg';
+import iisfAwardImg from '../assets/IISF mission startup award.jpg';
+
 // Array containing your YouTube video information
 const VIDEOS_DATA = [
   {
@@ -29,7 +35,7 @@ const VIDEOS_DATA = [
 
 export default function Awards() {
   // Local state to track which image is currently open in fullscreen
-  const [activeImage, setActiveImage] = useState(null);
+  const [activeImage, setActiveImage] = useState<string | null>(null);
 
   // Local state for the selected/playing YouTube video
   const [selectedVideo, setSelectedVideo] = useState(VIDEOS_DATA[0]);
@@ -123,16 +129,16 @@ export default function Awards() {
 
             {/* News Clipping Image Component */}
             <div
-  onClick={() => setActiveImage("/src/assets/the hindu news.jpg")}
-  className="md:w-1/2 rounded-2xl overflow-hidden border border-sand-200 bg-sand-50 relative min-h-[250px] shadow-inner group-hover:shadow-md transition-shadow cursor-zoom-in"
-  title="Click to zoom image"
->
-  <img
-    src="/src/assets/the hindu news.jpg"
-    alt="The Hindu News Article clipping"
-    className="absolute inset-0 w-full h-full object-cover object-left-top transition-transform duration-700 group-hover:scale-105"
-  />
-</div>
+              onClick={() => setActiveImage(theHinduNewsImg)}
+              className="md:w-1/2 rounded-2xl overflow-hidden border border-sand-200 bg-sand-50 relative min-h-[250px] shadow-inner group-hover:shadow-md transition-shadow cursor-zoom-in"
+              title="Click to zoom image"
+            >
+              <img
+                src={theHinduNewsImg}
+                alt="The Hindu News Article clipping"
+                className="absolute inset-0 w-full h-full object-cover object-left-top transition-transform duration-700 group-hover:scale-105"
+              />
+            </div>
           </motion.div>
 
           {/* B. Dainik Bhaskar News Clipping Card */}
@@ -172,16 +178,16 @@ export default function Awards() {
 
             {/* News Clipping Image Component */}
            <div
-  onClick={() => setActiveImage("/src/assets/hindi news.jpeg")}
-  className="md:w-1/2 rounded-2xl overflow-hidden border border-sand-200 bg-sand-50 relative min-h-[250px] shadow-inner group-hover:shadow-md transition-shadow cursor-zoom-in"
-  title="Click to zoom image"
->
-  <img
-    src="/src/assets/hindi news.jpeg"
-    alt="Hindi News Article clipping"
-    className="absolute inset-0 w-full h-full object-cover object-left-top transition-transform duration-700 group-hover:scale-105"
-  />
-</div>
+              onClick={() => setActiveImage(hindiNewsImg)}
+              className="md:w-1/2 rounded-2xl overflow-hidden border border-sand-200 bg-sand-50 relative min-h-[250px] shadow-inner group-hover:shadow-md transition-shadow cursor-zoom-in"
+              title="Click to zoom image"
+            >
+              <img
+                src={hindiNewsImg}
+                alt="Hindi News Article clipping"
+                className="absolute inset-0 w-full h-full object-cover object-left-top transition-transform duration-700 group-hover:scale-105"
+              />
+            </div>
           </motion.div>
         </div>
 
@@ -195,12 +201,12 @@ export default function Awards() {
         >
           {/* Left: Image Showcase */}
           <div 
-            onClick={() => setActiveImage("/src/assets/1 price innovatin challange.jpg")}
+            onClick={() => setActiveImage(innovationChallengeImg)}
             className="lg:col-span-5 rounded-2xl overflow-hidden shadow-xl border border-sand-200 cursor-zoom-in"
             title="Click to zoom image"
           >
             <img 
-              src="/src/assets/1 price innovatin challange.jpg" 
+              src={innovationChallengeImg} 
               alt="National Price Innovation Challenge Award" 
               className="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
             />
@@ -304,12 +310,12 @@ export default function Awards() {
 
           {/* Right: Image Showcase */}
           <div 
-            onClick={() => setActiveImage("/src/assets/IISF mission startup award.jpg")}
+            onClick={() => setActiveImage(iisfAwardImg)}
             className="lg:col-span-5 rounded-2xl overflow-hidden shadow-xl border border-sand-200 order-1 lg:order-2 cursor-zoom-in"
             title="Click to zoom image"
           >
             <img 
-              src="/src/assets/IISF mission startup award.jpg" 
+              src={iisfAwardImg} 
               alt="IISF Mission Startup Laurel Award" 
               className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
             />

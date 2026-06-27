@@ -18,6 +18,11 @@ import {
 } from 'lucide-react';
 import { FIELD_TRIALS } from '../data';
 
+// Import images statically for Vite production compilation (keep spaces in path strings)
+import realFieldTrialImg from '../assets/real field trial in pushkar rajasthan in deseart.png';
+import plotScaleTrialImg from '../assets/plot scale field trial of guar bajra mung crop.png';
+import fieldPrepImg from '../assets/field preperation and locatin information.png';
+
 type Trial = (typeof FIELD_TRIALS)[number];
 type TrialPhase = Trial['phase'];
 type Step = Trial['detailedSteps'][number];
@@ -30,12 +35,12 @@ export default function FieldTrials() {
 
   const getRealFieldImage = (phase: TrialPhase) => {
     if (phase === 'TRL-6') {
-      return '/src/assets/real%20field%20trial%20in%20pushkar%20rajasthan%20in%20deseart.png';
+      return realFieldTrialImg;
     }
     if (phase === 'TRL-5') {
-      return '/src/assets/plot%20scale%20field%20trial%20of%20guar%20bajra%20mung%20crop.png';
+      return plotScaleTrialImg;
     }
-    return '/src/assets/field%20preperation%20and%20locatin%20information.png';
+    return fieldPrepImg;
   };
 
   const phaseToKeyResult = (phase: TrialPhase) => {

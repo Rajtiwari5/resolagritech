@@ -8,6 +8,12 @@ import { motion } from 'motion/react';
 import { AlertCircle, Beaker, CheckCircle2, ChevronRight, HelpCircle, Activity, Wind, Eye, Calculator } from 'lucide-react';
 import { TECHNOLOGY_DETAILS, COMPARATIVE_ADVANTAGES } from '../data';
 
+// Import images statically for Vite production compilation
+import componentAPolymerImg from '../assets/componant a-polymer.jpg';
+import componentBCrossLinkerImg from '../assets/componant b - cross linker.jpg';
+import componentCPloymerImg from '../assets/component c ploymer.jpg';
+import resolFormulaResultImg from '../assets/resol formula result of component a,b ,c.png';
+
 export default function Technology() {
   // Simulator State inside crop estimations
   const [acreage, setAcreage] = useState<number>(5); // Default 5 acres
@@ -16,7 +22,6 @@ export default function Technology() {
   // Quantitative Yield and Resource Calculations (Using exact PDF metrics)
   // Resol Yield: 1120 kg/acre | Pusa: 180 kg/acre | Sujlam: 120 kg/acre
   // Recommended polymer application: 15 kg per local field area of 1000m² is ~60 kg/acre.
-  // Wait, let's keep a standard, realistic application math: e.g. 10 kg/acre needed is great.
   // Unit price: Resol 840/kg, Pusa 1250/kg, Sujlam 650/kg
   const calcYield = (acres: number) => {
     const polymerNeededKg = acres * 10; // 10 kg per acre application rate
@@ -160,7 +165,7 @@ export default function Technology() {
                 >
                   <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-100">Component A</span>
                   <div className="w-full h-32 rounded-xl overflow-hidden bg-blue-50/50 border border-sand-100 relative">
-                    <img src="/src/assets/componant a-polymer.jpg" alt="Component A" className="w-full h-full object-cover" />
+                    <img src={componentAPolymerImg} alt="Component A" className="w-full h-full object-cover" />
                   </div>
                   <div>
                     <h4 className="font-bold text-slate-800 text-xs uppercase font-mono">Polymer Base (VAG)</h4>
@@ -179,7 +184,7 @@ export default function Technology() {
                 >
                   <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-100">Component B</span>
                   <div className="w-full h-32 rounded-xl overflow-hidden bg-amber-50/50 border border-sand-100 relative">
-                    <img src="/src/assets/componant%20b%20-%20cross%20linker.jpg" alt="Component B" className="w-full h-full object-cover" />
+                    <img src={componentBCrossLinkerImg} alt="Component B" className="w-full h-full object-cover" />
                   </div>
                   <div>
                     <h4 className="font-bold text-slate-800 text-xs uppercase font-mono">Cross Linker</h4>
@@ -198,7 +203,7 @@ export default function Technology() {
                 >
                   <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-100">Component C</span>
                   <div className="w-full h-32 rounded-xl overflow-hidden bg-emerald-50/50 border border-sand-100 relative">
-                    <img src="/src/assets/component%20c%20ploymer.jpg" alt="Component C" className="w-full h-full object-cover" />
+                    <img src={componentCPloymerImg} alt="Component C" className="w-full h-full object-cover" />
                   </div>
                   <div>
                     <h4 className="font-bold text-slate-800 text-xs uppercase font-mono">Silica Anchoring Polymer</h4>
@@ -217,7 +222,7 @@ export default function Technology() {
                 >
                   <span className="text-[9px] font-mono font-bold tracking-widest px-2 py-0.5 rounded bg-amber-500 text-slate-950 uppercase absolute -top-2.5">Combined Solution</span>
                   <div className="w-full h-32 rounded-xl overflow-hidden bg-white/5 border border-white/20 relative">
-                    <img src="/src/assets/resol formula result of component a,b ,c.png" alt="Resol Formulation" className="w-full h-full object-contain p-2" />
+                    <img src={resolFormulaResultImg} alt="Resol Formulation" className="w-full h-full object-contain p-2" />
                   </div>
                   <div>
                     <h4 className="font-bold text-amber-400 text-xs uppercase font-mono">Resol Formulation</h4>

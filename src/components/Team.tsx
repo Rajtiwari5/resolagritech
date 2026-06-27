@@ -8,14 +8,18 @@ import { motion } from 'motion/react';
 import { Mail, Linkedin, ArrowUpRight, Award, Sprout, Landmark, Lightbulb } from 'lucide-react';
 import { TEAM_MEMBERS } from '../data';
 
+// Import images statically for Vite production compilation
+import founderImg from '../assets/founder.png';
+import coFounderImg from '../assets/co founder.png';
+
 export default function Team() {
   
   const renderPersonImage = (id: string, name: string) => {
     let imgSrc = "";
     if (id === 'diksha-kumari') {
-      imgSrc = "/src/assets/founder.png";
+      imgSrc = founderImg;
     } else if (id === 'dr-akhil-agrawal') {
-      imgSrc = "/src/assets/co%20founder.png";
+      imgSrc = coFounderImg;
     } else {
       imgSrc = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&size=400&background=random`;
     }
@@ -182,16 +186,6 @@ export default function Team() {
 
                   {/* Link action footers */}
                   <div className="pt-6 border-t border-[#e8dfcf] flex flex-wrap gap-4 items-center">
-                    
-                    {/* {member.socials.email && (
-                      <a 
-                        href={`mailto:${member.socials.email}`}
-                        className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-slate-800 hover:text-clay-600 transition-colors border-b-2 border-slate-800 hover:border-clay-600 pb-0.5"
-                      >
-                        <span>Direct Mail</span>
-                        <ArrowUpRight className="w-3.5 h-3.5" />
-                      </a>
-                    )} */}
 
                     {member.socials.linkedin && (
                       <a 
@@ -218,4 +212,3 @@ export default function Team() {
     </section>
   );
 }
-
